@@ -1,3 +1,5 @@
+#include <Servo.h>
+
 typedef enum {
   sSTARTING = 1,
   sRUNNING = 2,
@@ -6,6 +8,9 @@ typedef enum {
 } state;
 
 // Ports
+Servo servo_pin_2;
+int STOP_VAL = 95;
+int START_VAL = 120;
 int INPUT_START_PAUSE = 6;
 int INPUT_RESET_BUTTON = 7;
 int INPUT_INC_BUTTON = 8;
@@ -14,11 +19,12 @@ int OUTPUT_LED_0 = 0;
 int OUTPUT_LED_1 = 1;
 int OUTPUT_SERVO = 2;
 
+
 // Indexes for button_array
-int START_PAUSE = 6;
-int RESET_BUTTON = 7;
-int INC_BUTTON = 8;
-int DEC_BUTTON = 9;
+int START_PAUSE = 0;
+int RESET_BUTTON = 1;
+int INC_BUTTON = 2;
+int DEC_BUTTON = 3;
 
 // Input variables
 volatile int button_array[4];
@@ -29,7 +35,7 @@ state CURRENT_STATE;
 float TRACK_DIST = 10; //TODO
 
 // Function declarations
-state update_fsm(state CURRENT_STATE, int timer, volatile int button_array[4], float freq_step, float dist_travelled);
+state update_fsm(state CURRENT_STATE); //, int timer, volatile int button_array[4], float freq_step, float dist_travelled);
 void start_step(float freq_step);
 void stop_step();
 void reset_system();

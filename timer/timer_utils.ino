@@ -37,10 +37,12 @@ void set_lights(int timer){
 
 void start_step(float freq_step){ //TODO
     Serial.println(freq_step);
+    servo_pin_2.write(START_VAL);
 }
 
 void stop_step(){//TODO
     Serial.println("Stopped");
+    servo_pin_2.write(STOP_VAL);
 }
 
 void reset_system(){//TODO
