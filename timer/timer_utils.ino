@@ -34,3 +34,15 @@ void set_lights(int timer){
     digitalWrite(OUTPUT_LED_1, LOW);
   }
 }
+
+void start_step(float freq_step){ //TODO
+    Serial.println(freq_step);
+}
+
+void stop_step(){//TODO
+    Serial.println("Stopped");
+}
+
+void reset_system(){//TODO
+    Serial.println("Reset");
+}

@@ -24,11 +24,13 @@ int DEC_BUTTON = 9;
 volatile int button_array[4];
 int timer;
 float freq_step;
+float dist_travelled;
 state CURRENT_STATE;
+float TRACK_DIST = 10; //TODO
 
 // Function declarations
-int update_fsm(state CURRENT_STATE, int timer, int button_array[4], float freq_step);
-void start_step(int freq);
+state update_fsm(state CURRENT_STATE, int timer, volatile int button_array[4], float freq_step, float dist_travelled);
+void start_step(float freq_step);
 void stop_step();
 void reset_system();
 void clear_buttons();
