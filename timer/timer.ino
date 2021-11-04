@@ -31,8 +31,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+   noInterrupts();
    CURRENT_STATE = update_fsm(CURRENT_STATE);
-   delay(100);
+   interrupts();
+   delay(1000);
 }
 
 state update_fsm(state CURRENT_STATE){
