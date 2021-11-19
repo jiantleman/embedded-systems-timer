@@ -1,12 +1,9 @@
-void clear_buttons(){
-  button_array[0] = 0;
-  button_array[1] = 0;
-  button_array[2] = 0;
-  button_array[3] = 0;
+void clear_buttons(int button){
+  button_array[button] = 0;
 }
 
 void start_pause_handler(){
-  button_array[START_PAUSE] = 1;
+  button_array[START_PAUSE_BUTTON] = 1;
 }
 
 void reset_button_handler(){
@@ -37,12 +34,29 @@ void set_lights(int timer){
 
 void start_step(float freq_step){ //TODO
     Serial.println(freq_step);
-    servo_pin_2.write(START_VAL);
+    // Turn off interrupts to TC3 on MC0 when configuring
+    TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0; 
+    TC3->COUNT16.CTRLA.reg = TC_CTRLA_ENABLE | TC_CTRLA_PRESCSYNC(1) | TC_CTRLA_PRESCALER(0) | TC_CTRLA_WAVEGEN(1) | TC_CTRLA_MODE(0);
+    while(TC3->COUNT16.STATUS.bit.SYNCBUSY);
+    TC3->COUNT16.CC[0].reg = CLOCKFREQ/freq_step;
+    while(TC3->COUNT16.STATUS.bit.SYNCBUSY);
+    TC3->COUNT16.INTENSET.reg = TC_INTENSET_MC0; 
+    // Turn interrupts to TC3 on MC0 back on when done configuring
 }
 
 void stop_step(){//TODO
     Serial.println("Stopped");
-    servo_pin_2.write(STOP_VAL);
+    TC3->COUNT16.CTRLA.bit.ENABLE = 0;
+    TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0;
+//    PORT->Group[PORTB].DIRCLR.reg != (1<<10);
+}
+
+void TC3_Handler() {
+  // Clear interrupt register flag
+  TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
+  dist_travelled += 1;
+  myStepper.setSpeed(RPM);
+  myStepper.step(1);
 }
 
 void reset_system(){//TODO
