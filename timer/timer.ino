@@ -12,16 +12,15 @@ void setup() {
   pinMode(OUTPUT_LED_0, OUTPUT);
   pinMode(OUTPUT_LED_1, OUTPUT);
 
-  // Initial variable values
+  // Initial input and variable values
   timer = 1;
-  freq_step = (timer*60)/TRACK_DIST;
-  dist_travelled = 0;
+  freq_step = TRACK_DIST/(timer*60);
   set_lights(timer);
-  clear_buttons(INC_BUTTON);
-  clear_buttons(DEC_BUTTON);
-  clear_buttons(START_PAUSE_BUTTON);
-  clear_buttons(RESET_BUTTON);
   CURRENT_STATE = sSTARTING;
+
+  resettable = 0;
+  clear_buttons();
+  steps_taken = 0;
 
   // Set up interrupts
   attachInterrupt(digitalPinToInterrupt(INPUT_START_PAUSE), start_pause_handler, RISING);
@@ -51,78 +50,62 @@ void setup() {
 
 
 void loop() {
-   CURRENT_STATE = update_fsm(CURRENT_STATE);
+   CURRENT_STATE = update_fsm(CURRENT_STATE, button_array, steps_taken);
+   clear_buttons();
 }
 
-state update_fsm(state CURRENT_STATE){
+state update_fsm(state CURRENT_STATE,volatile int local_button_array[4], volatile int local_steps_taken){
   state next_state;
   switch(CURRENT_STATE) {
   case sSTARTING:
-    if(button_array[INC_BUTTON]==1 && timer < 4 && 
-       button_array[DEC_BUTTON]!=1 && 
-       button_array[START_PAUSE_BUTTON]!=1){                  // Transition 1-1a
+    if(local_button_array[INC_BUTTON]==1 && timer < 4 && 
+       local_button_array[DEC_BUTTON]!=1 && 
+       local_button_array[START_PAUSE_BUTTON]!=1){                  // Transition 1-1a
       set_lights(timer+1);
-      clear_buttons(INC_BUTTON);
       timer = timer+1;
-      freq_step = (timer*60)/TRACK_DIST;
+      freq_step = TRACK_DIST/(timer*60);
       next_state = sSTARTING; 
-    } else if (button_array[DEC_BUTTON]==1 && timer > 1 && 
-       button_array[INC_BUTTON]!=1 && 
-       button_array[START_PAUSE_BUTTON]!=1){                  // Transition 1-1b
+    } else if (local_button_array[DEC_BUTTON]==1 && timer > 1 && 
+       local_button_array[INC_BUTTON]!=1 && 
+       local_button_array[START_PAUSE_BUTTON]!=1){                  // Transition 1-1b
       set_lights(timer-1);
-      clear_buttons(DEC_BUTTON);
       timer = timer - 1;
-      freq_step = (timer*60)/TRACK_DIST;
+      freq_step = TRACK_DIST/(timer*60);
       next_state = sSTARTING; 
-    } else if (button_array[START_PAUSE_BUTTON]==1){          // Transition 1-2
+    } else if (local_button_array[START_PAUSE_BUTTON]==1){          // Transition 1-2
       start_step(freq_step);
-      clear_buttons(START_PAUSE_BUTTON);
       next_state = sRUNNING; 
-    } else {                                                  // Transition 1-1c
-      clear_buttons(INC_BUTTON);
-      clear_buttons(DEC_BUTTON);
+    } else {                                                  
       next_state = sSTARTING;    
     }
     break;
   case sRUNNING:
-    if (button_array[START_PAUSE_BUTTON]==1 &&
-        dist_travelled != TRACK_DIST){                    // Transition 2-3
+    if (local_button_array[START_PAUSE_BUTTON]==1 &&
+        local_steps_taken != TRACK_DIST){                           // Transition 2-3
       stop_step();
-      clear_buttons(START_PAUSE_BUTTON);
-      clear_buttons(RESET_BUTTON);
       next_state = sPAUSED;
-    } else if (dist_travelled == TRACK_DIST){                  // Transition 2-4
+    } else if (local_steps_taken == TRACK_DIST){                    // Transition 2-4
       stop_step();
-      clear_buttons(RESET_BUTTON);
       next_state = sFINISHED;                             
     } else{
       next_state = sRUNNING;
     }
     break;
   case sPAUSED:
-    if (button_array[RESET_BUTTON]==1){                        // Transition 3-1
+    if (local_button_array[RESET_BUTTON]==1){                        // Transition 3-1
         reset_system();
-        clear_buttons(INC_BUTTON);
-        clear_buttons(DEC_BUTTON);
-        clear_buttons(START_PAUSE_BUTTON);
-        dist_travelled = 0;
         next_state = sSTARTING;
-      } else if (button_array[START_PAUSE_BUTTON]==1 &&
-                 button_array[RESET_BUTTON]!=1){               // Transition 3-2
+      } else if (local_button_array[START_PAUSE_BUTTON]==1 &&
+                 local_button_array[RESET_BUTTON]!=1){               // Transition 3-2
         start_step(freq_step);
-        clear_buttons(RESET_BUTTON);
         next_state = sRUNNING;
       } else{
         next_state = sPAUSED;
       }
     break;
   case sFINISHED:
-    if(button_array[RESET_BUTTON]==1){                         // Transition 4-1
+    if(local_button_array[RESET_BUTTON]==1){                         // Transition 4-1
       reset_system();
-      dist_travelled = 0;
-      clear_buttons(INC_BUTTON);
-      clear_buttons(DEC_BUTTON);
-      clear_buttons(START_PAUSE_BUTTON);
       next_state = sSTARTING;
     } else {
       next_state = sFINISHED;
