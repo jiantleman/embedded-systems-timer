@@ -62,12 +62,14 @@ void stop_step(){//TODO
 void TC3_Handler() {
   // Clear interrupt register flag
   TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
-  steps_taken += 1;
+  steps_taken += NUMBER_STEPS;
   myStepper.setSpeed(RPM);
-  myStepper.step(1);
+  myStepper.step(NUMBER_STEPS);
 }
 
 void reset_system(){//TODO
+    myStepper.setSpeed(RPM);
+    myStepper.step(-steps_taken);
     resettable = 0;
     steps_taken = 0;
     Serial.println("Reset");
