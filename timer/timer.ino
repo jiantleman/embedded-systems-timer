@@ -46,12 +46,38 @@ void setup() {
   while(TC3->COUNT16.STATUS.bit.SYNCBUSY);
   
 
+  // Clear and enable WDT
+  NVIC_DisableIRQ(WDT_IRQn);
+  NVIC_ClearPendingIRQ(WDT_IRQn);
+  NVIC_SetPriority(WDT_IRQn, 0);
+  NVIC_EnableIRQ(WDT_IRQn);
+
+  // Configure and enable WDT GCLK:
+  GCLK->GENDIV.reg = GCLK_GENDIV_DIV(4) | GCLK_GENDIV_ID(5);
+  while (GCLK->STATUS.bit.SYNCBUSY);
+  // set GCLK->GENCTRL.reg and GCLK->CLKCTRL.reg
+  GCLK->GENCTRL.reg = GCLK_GENCTRL_DIVSEL | GCLK_GENCTRL_GENEN | GCLK_GENCTRL_SRC(3) | GCLK_GENCTRL_ID(5);
+  while(GCLK->STATUS.bit.SYNCBUSY);
+  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN(5) | GCLK_CLKCTRL_ID(0x3);
+  while(GCLK->STATUS.bit.SYNCBUSY);
+  // Configure and enable WDT:
+  // WDT->CONFIG.reg, WDT->EWCTRL.reg, WDT->CTRL.reg
+  WDT->CONFIG.reg = WDT_CONFIG_PER(9);
+  WDT->EWCTRL.reg = WDT_EWCTRL_EWOFFSET(8);
+  WDT->CTRL.reg = WDT_CTRL_ENABLE;
+
+  // Enable early warning interrupts on WDT:
+  // reference WDT registers with WDT->register_name.reg
+  WDT->INTENSET.reg = WDT_INTENSET_EW;
+
 }
 
 
 void loop() {
    CURRENT_STATE = update_fsm(CURRENT_STATE, button_array, steps_taken);
    clear_buttons();
+
+   WDT->CLEAR.reg = 0xa5;
 }
 
 state update_fsm(state CURRENT_STATE,volatile int local_button_array[4], volatile int local_steps_taken){

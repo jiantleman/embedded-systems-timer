@@ -74,3 +74,11 @@ void reset_system(){//TODO
     steps_taken = 0;
     Serial.println("Reset");
 }
+
+void WDT_Handler() {
+  // Clear interrupt register flag
+  // (reference register with WDT->register_name.reg)
+  WDT->INTFLAG.reg |= WDT_INTFLAG_EW;
+  // Warn user that a watchdog reset may happen
+  Serial.println("Reset may happen");
+}
