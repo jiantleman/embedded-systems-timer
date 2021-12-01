@@ -56,15 +56,14 @@ void stop_step(){//TODO
     resettable = 1;
     TC3->COUNT16.CTRLA.bit.ENABLE = 0;
     TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0;
-//    PORT->Group[PORTB].DIRCLR.reg != (1<<10);
 }
 
 void TC3_Handler() {
   // Clear interrupt register flag
   TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
-  steps_taken += NUMBER_STEPS;
+  steps_taken += 1;
   myStepper.setSpeed(RPM);
-  myStepper.step(NUMBER_STEPS);
+  myStepper.step(1);
 }
 
 void reset_system(){//TODO

@@ -21,7 +21,6 @@ const int CLOCKFREQ = 32000;
 int STEPS_PER_REV = 32;
 Stepper myStepper(STEPS_PER_REV,2,3,4,5);
 int RPM = 50;
-int NUMBER_STEPS = 1;
 
 // Indexes for button_array
 int START_PAUSE_BUTTON = 0;
