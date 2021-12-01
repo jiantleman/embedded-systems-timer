@@ -13,7 +13,7 @@ void reset_button_handler(){
   button_array[RESET_BUTTON] = 1;
   if (resettable){
     steps_taken = 0;
-    }
+  }
 }
 
 void inc_button_handler(){
@@ -25,6 +25,10 @@ void dec_button_handler(){
 }
 
 void set_lights(int timer){
+  Serial.print("Timer Value: ");
+  Serial.print(timer);
+  Serial.print(" min");
+  Serial.println(" ");
   int value = timer - 1;
   if (value & 1){
     digitalWrite(OUTPUT_LED_0, HIGH);
@@ -39,7 +43,9 @@ void set_lights(int timer){
 }
 
 void start_step(float freq_step){ //TODO
-    Serial.println(freq_step);
+    Serial.print("Start Stepping: ");
+    Serial.print(freq_step);
+    Serial.println(" ");
     resettable = 0;
     // Turn off interrupts to TC3 on MC0 when configuring
     TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0; 
@@ -52,7 +58,7 @@ void start_step(float freq_step){ //TODO
 }
 
 void stop_step(){//TODO
-    Serial.println("Stopped");
+    Serial.println("Stop Stepping");
     resettable = 1;
     TC3->COUNT16.CTRLA.bit.ENABLE = 0;
     TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0;
@@ -60,6 +66,7 @@ void stop_step(){//TODO
 }
 
 void TC3_Handler() {
+  Serial.println("Step");
   // Clear interrupt register flag
   TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
   steps_taken += NUMBER_STEPS;
@@ -72,7 +79,7 @@ void reset_system(){//TODO
     myStepper.step(-steps_taken);
     resettable = 0;
     steps_taken = 0;
-    Serial.println("Reset");
+    Serial.println("Resetting Timer");
 }
 
 void WDT_Handler() {
@@ -80,5 +87,18 @@ void WDT_Handler() {
   // (reference register with WDT->register_name.reg)
   WDT->INTFLAG.reg |= WDT_INTFLAG_EW;
   // Warn user that a watchdog reset may happen
-  Serial.println("Reset may happen");
+  Serial.println("WDT Reset May Happen");
 }
+
+void print_state(state CURRENT_STATE) {
+  if (prevState != CURRENT_STATE) {
+    prevState = CURRENT_STATE;
+    switch (prevState) {
+      case 1: Serial.println("sSTARTING"); return;
+      case 2: Serial.println("sRUNNING"); return;
+      case 3: Serial.println("sPAUSED"); return;
+      case 4: Serial.println("sFINISHED"); return;
+      default: Serial.println("ERROR"); return;
+    }
+  }
+} 
