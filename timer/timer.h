@@ -21,7 +21,6 @@ const int CLOCKFREQ = 32000;
 int STEPS_PER_REV = 32;
 Stepper myStepper(STEPS_PER_REV,2,3,4,5);
 int RPM = 50;
-int NUMBER_STEPS = 1;
 
 // Indexes for button_array
 int START_PAUSE_BUTTON = 0;
@@ -40,6 +39,9 @@ int timer;
 float freq_step;
 state CURRENT_STATE;
 
+// For Serial Printing
+state prevState;
+
 // Function declarations
 state update_fsm(state CURRENT_STATE, volatile int local_button_array[4], volatile int local_steps_taken);
 void start_step(float freq_step);
@@ -53,3 +55,4 @@ void start_pause_handler();
 void reset_button_handler(); 
 void inc_button_handler(); 
 void dec_button_handler(); 
+void print_state(state CURRENT_STATE); 
