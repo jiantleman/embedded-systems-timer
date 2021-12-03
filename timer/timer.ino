@@ -15,13 +15,15 @@ void setup() {
 
   // Initial input and variable values
   timer = 1;
-  freq_step = TRACK_DIST/(timer*60);
+  freq_step = TRACK_DIST/(STEPS*timer*60);
   set_lights(timer);
   CURRENT_STATE = sSTARTING;
 
-  resettable = 0;
   clear_buttons();
   steps_taken = 0;
+  stepper.setMaxSpeed(200.0);
+  stepper.setAcceleration(100.0);
+  stepper.moveTo(TRACK_DIST);
 
   prevState = sSTARTING;
 
@@ -52,6 +54,9 @@ void setup() {
   while(TC3->COUNT16.STATUS.bit.SYNCBUSY);
   TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0; 
   while(TC3->COUNT16.STATUS.bit.SYNCBUSY);
+
+  NVIC_SetPriority(TC3_IRQn, 1);
+  NVIC_EnableIRQ(TC3_IRQn);
   
   Serial.println("Setting Up WDT");
   // Clear and enable WDT
@@ -64,14 +69,14 @@ void setup() {
   GCLK->GENDIV.reg = GCLK_GENDIV_DIV(4) | GCLK_GENDIV_ID(5);
   while (GCLK->STATUS.bit.SYNCBUSY);
   // set GCLK->GENCTRL.reg and GCLK->CLKCTRL.reg
-  GCLK->GENCTRL.reg = GCLK_GENCTRL_DIVSEL | GCLK_GENCTRL_GENEN | GCLK_GENCTRL_SRC(3) | GCLK_GENCTRL_ID(5);
+  GCLK->GENCTRL.reg = GCLK_GENCTRL_DIVSEL | GCLK_GENCTRL_GENEN | GCLK_GENCTRL_SRC(5) | GCLK_GENCTRL_ID(5);
   while(GCLK->STATUS.bit.SYNCBUSY);
   GCLK->CLKCTRL.reg = GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN(5) | GCLK_CLKCTRL_ID(0x3);
   while(GCLK->STATUS.bit.SYNCBUSY);
   // Configure and enable WDT:
   // WDT->CONFIG.reg, WDT->EWCTRL.reg, WDT->CTRL.reg
-  WDT->CONFIG.reg = WDT_CONFIG_PER(9);
-  WDT->EWCTRL.reg = WDT_EWCTRL_EWOFFSET(8);
+  WDT->CONFIG.reg = WDT_CONFIG_PER(0xB);
+  WDT->EWCTRL.reg = WDT_EWCTRL_EWOFFSET(0xA);
   WDT->CTRL.reg = WDT_CTRL_ENABLE;
 
   // Enable early warning interrupts on WDT:
@@ -99,14 +104,14 @@ state update_fsm(state CURRENT_STATE,volatile int local_button_array[4], volatil
        local_button_array[START_PAUSE_BUTTON]!=1){                  // Transition 1-1a
       set_lights(timer+1);
       timer = timer+1;
-      freq_step = TRACK_DIST/(timer*60);
+      freq_step = TRACK_DIST/(STEPS*timer*60);
       next_state = sSTARTING; 
     } else if (local_button_array[DEC_BUTTON]==1 && timer > 1 && 
        local_button_array[INC_BUTTON]!=1 && 
        local_button_array[START_PAUSE_BUTTON]!=1){                  // Transition 1-1b
       set_lights(timer-1);
       timer = timer - 1;
-      freq_step = TRACK_DIST/(timer*60);
+      freq_step = TRACK_DIST/(STEPS*timer*60);
       next_state = sSTARTING; 
     } else if (local_button_array[START_PAUSE_BUTTON]==1){          // Transition 1-2
       start_step(freq_step);

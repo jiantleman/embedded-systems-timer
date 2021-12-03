@@ -1,4 +1,5 @@
 #include <Stepper.h>
+#include <AccelStepper.h>
 
 // States
 typedef enum {
@@ -17,10 +18,12 @@ int OUTPUT_LED_0 = 0;
 int OUTPUT_LED_1 = 1;
 
 // TC and stepper
-const int CLOCKFREQ = 32000;
-int STEPS_PER_REV = 32;
-Stepper myStepper(STEPS_PER_REV,2,3,4,5);
-int RPM = 50;
+const int CLOCKFREQ = 32768;
+const int STEPS_PER_REV = 200;
+//Stepper myStepper(STEPS_PER_REV, 2, 3, 4, 5);
+AccelStepper stepper;
+const int RPM = 100;
+const int STEPS = 1;
 
 // Indexes for button_array
 int START_PAUSE_BUTTON = 0;
@@ -31,8 +34,7 @@ int DEC_BUTTON = 3;
 // Inputs
 volatile int button_array[4];
 volatile int steps_taken;
-int resettable;
-int TRACK_DIST = 320; //TODO
+int TRACK_DIST = 2400; //TODO
 
 // Variables
 int timer;

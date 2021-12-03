@@ -11,9 +11,6 @@ void start_pause_handler(){
 
 void reset_button_handler(){
   button_array[RESET_BUTTON] = 1;
-  if (resettable){
-    steps_taken = 0;
-  }
 }
 
 void inc_button_handler(){
@@ -46,7 +43,6 @@ void start_step(float freq_step){ //TODO
     Serial.print("Start Stepping: ");
     Serial.print(freq_step);
     Serial.println(" ");
-    resettable = 0;
     // Turn off interrupts to TC3 on MC0 when configuring
     TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0; 
     TC3->COUNT16.CTRLA.reg = TC_CTRLA_ENABLE | TC_CTRLA_PRESCSYNC(1) | TC_CTRLA_PRESCALER(0) | TC_CTRLA_WAVEGEN(1) | TC_CTRLA_MODE(0);
@@ -59,25 +55,28 @@ void start_step(float freq_step){ //TODO
 
 void stop_step(){//TODO
     Serial.println("Stop Stepping");
-    resettable = 1;
     TC3->COUNT16.CTRLA.bit.ENABLE = 0;
     TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0;
 }
 
 void TC3_Handler() {
-  Serial.println("Step");
+  Serial.println("Step Start");
   // Clear interrupt register flag
+//  myStepper.setSpeed(RPM);
+//  myStepper.step(1);
+  steps_taken += STEPS;
+  stepper.run();
+  Serial.println("Step Finish");
   TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
-  steps_taken += 1;
-  myStepper.setSpeed(RPM);
-  myStepper.step(1);
 }
 
 void reset_system(){//TODO
-    myStepper.setSpeed(RPM);
-    myStepper.step(-steps_taken);
-    resettable = 0;
+//    myStepper.setSpeed(RPM);
+//    for (int i=0;i < steps_taken; i++) {
+//      myStepper.step(-1);
+//    }
     steps_taken = 0;
+    stepper.runToNewPosition(steps_taken);
     Serial.println("Resetting Timer");
 }
 
