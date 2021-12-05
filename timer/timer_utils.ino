@@ -6,18 +6,22 @@ void clear_buttons(){
 }
 
 void start_pause_handler(){
+//  Serial.println("START_PAUSE BUTTON CLICKED");
   button_array[START_PAUSE_BUTTON] = 1;
 }
 
 void reset_button_handler(){
+//  Serial.println("RESET BUTTON CLICKED");
   button_array[RESET_BUTTON] = 1;
 }
 
 void inc_button_handler(){
+//  Serial.println("INC BUTTON CLICKED");
   button_array[INC_BUTTON] = 1;
 }
 
 void dec_button_handler(){
+//  Serial.println("DEC BUTTON CLICKED");
   button_array[DEC_BUTTON] = 1;
 }
 

@@ -82,8 +82,11 @@ void setup() {
   
   Serial.println("Starting System");
   Serial.println("sSTARTING");
+//  test_fsm();
+//  test_button_handlers();
+//  test_leds();
+//  test_stepper();
 }
-
 
 void loop() {
    CURRENT_STATE = update_fsm(CURRENT_STATE, button_array, steps_taken);

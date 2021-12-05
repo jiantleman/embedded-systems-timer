@@ -93,7 +93,7 @@ const int num_tests = 0;
 /*
  * Runs through all the test cases defined above
  */
-bool test_all_tests() {
+bool test_fsm() {
   for (int i = 0; i < num_tests; i++) {
     Serial.print("Running test ");
     Serial.println(i);
@@ -102,6 +102,43 @@ bool test_all_tests() {
     }
     Serial.println();
   }
-  Serial.println("All tests passed!");
+  Serial.println("All FSM Tests Passed!");
+  return true;
+}
+
+bool test_button_handlers() {
+  Serial.println("Click Start/Pause Button");
+  while(button_array[START_PAUSE_BUTTON] != 1);
+  Serial.println("Click Reset Button");
+  while(button_array[RESET_BUTTON] != 1);
+  Serial.println("Click Increment Button");
+  while(button_array[INC_BUTTON] != 1);
+  Serial.println("Click Decrement Button");
+  while(button_array[DEC_BUTTON] != 1);
+  Serial.println("Button Handlers Works!");
+  return true;
+}
+
+bool test_leds() {
+  Serial.println("Timer = 1");
+  set_lights(1);
+  delay(2000);
+  Serial.println("Timer = 2");
+  set_lights(2);
+  delay(2000);
+  Serial.println("Timer = 3");
+  set_lights(3);
+  delay(2000);
+  Serial.println("Timer = 4");
+  set_lights(4);
+  delay(2000);
+  return true;
+}
+
+bool test_stepper() {
+  stepper.runToNewPosition(0);
+  stepper.runToNewPosition(500);
+  stepper.runToNewPosition(100);
+  stepper.runToNewPosition(120);
   return true;
 }
