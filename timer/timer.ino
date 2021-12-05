@@ -21,9 +21,13 @@ void setup() {
 
   clear_buttons();
   steps_taken = 0;
-  stepper.setMaxSpeed(200.0);
-  stepper.setAcceleration(100.0);
+  stepper.setCurrentPosition(0);  
   stepper.moveTo(TRACK_DIST);
+  stepper.setMaxSpeed(1000.0);
+//  stepper.setSpeed(500.0);
+  stepper.setAcceleration(100.0);
+
+  mov = 0;
 
   prevState = sSTARTING;
 
@@ -92,6 +96,10 @@ void loop() {
    clear_buttons();
 
    WDT->CLEAR.reg = 0xa5;
+   if (mov) {
+    stepper.run();
+    mov = 0;
+   }
 }
 
 state update_fsm(state CURRENT_STATE,volatile int local_button_array[4], volatile int local_steps_taken){

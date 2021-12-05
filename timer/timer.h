@@ -24,6 +24,7 @@ const int STEPS_PER_REV = 200;
 AccelStepper stepper;
 const int RPM = 100;
 const int STEPS = 1;
+int mov = 0;
 
 // Indexes for button_array
 int START_PAUSE_BUTTON = 0;

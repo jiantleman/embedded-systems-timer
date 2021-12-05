@@ -66,6 +66,8 @@ void TC3_Handler() {
 //  myStepper.step(1);
   steps_taken += STEPS;
   stepper.run();
+//    stepper.runSpeed();
+//mov = 1;
   Serial.println("Step Finish");
   TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
 }
@@ -77,6 +79,8 @@ void reset_system(){//TODO
 //    }
     steps_taken = 0;
     stepper.runToNewPosition(steps_taken);
+    stepper.setCurrentPosition(0);
+    stepper.moveTo(TRACK_DIST);
     Serial.println("Resetting Timer");
 }
 
