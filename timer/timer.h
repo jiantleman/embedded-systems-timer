@@ -1,4 +1,4 @@
-#include <Stepper.h>
+//#include <Stepper.h>
 #include <AccelStepper.h>
 
 // States
@@ -19,12 +19,10 @@ int OUTPUT_LED_1 = 1;
 
 // TC and stepper
 const int CLOCKFREQ = 32768;
-const int STEPS_PER_REV = 200;
+//const int STEPS_PER_REV = 200;
 //Stepper myStepper(STEPS_PER_REV, 2, 3, 4, 5);
+//const int RPM = 100;
 AccelStepper stepper;
-const int RPM = 100;
-const int STEPS = 1;
-int mov = 0;
 
 // Indexes for button_array
 int START_PAUSE_BUTTON = 0;
@@ -35,14 +33,14 @@ int DEC_BUTTON = 3;
 // Inputs
 volatile int button_array[4];
 volatile int steps_taken;
-int TRACK_DIST = 2400; //TODO
+int TRACK_DIST = 2400;
 
 // Variables
 int timer;
 float freq_step;
 state CURRENT_STATE;
 
-// For Serial Printing
+// For Serial printing and testingss
 state prevState;
 
 // Function declarations
