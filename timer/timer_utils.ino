@@ -25,6 +25,8 @@ void dec_button_handler(){
   button_array[DEC_BUTTON] = 1;
 }
 
+#ifndef TESTING
+
 void set_lights(int timer){
   Serial.print("Set lights: ");
   Serial.print(timer);
@@ -63,17 +65,6 @@ void stop_step(){
     TC3->COUNT16.INTENCLR.reg = TC_INTENCLR_MC0;
 }
 
-void TC3_Handler() {
-  Serial.println("Step start");
-  // Clear interrupt register flag
-  TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
-//  myStepper.setSpeed(RPM);
-//  myStepper.step(1);
-  steps_taken += 1;
-  stepper.run();
-  Serial.println("Step finish");
-}
-
 void reset_system(){
 //    myStepper.setSpeed(RPM);
 //    for (int i=0;i < steps_taken; i++) {
@@ -84,6 +75,38 @@ void reset_system(){
     stepper.runToNewPosition(0);
     stepper.setCurrentPosition(0);
     stepper.moveTo(TRACK_DIST);
+}
+
+#else
+void set_lights(int timer){
+  Serial.print("Set lights: ");
+  Serial.print(timer);
+  Serial.println(" min");
+}
+
+void start_step(float freq_step){
+    Serial.print("Start step: ");
+    Serial.println(freq_step);
+}
+
+void stop_step(){
+    Serial.println("Stop step");
+}
+
+void reset_system(){
+    Serial.println("Reset system");
+}
+#endif
+
+void TC3_Handler() {
+  Serial.println("Step start");
+  // Clear interrupt register flag
+  TC3->COUNT16.INTFLAG.reg |= TC_INTFLAG_MC0; 
+//  myStepper.setSpeed(RPM);
+//  myStepper.step(1);
+  steps_taken += 1;
+  stepper.run();
+  Serial.println("Step finish");
 }
 
 void WDT_Handler() {

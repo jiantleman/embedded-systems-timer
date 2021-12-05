@@ -53,8 +53,8 @@ bool test_transition(state start_state,
                      state_vars start_state_vars,
                      state_vars end_state_vars,
                      bool verbos) {
-  int timer = start_state_vars.timer;
-  int freq_step = start_state_vars.freq_step;
+  timer = start_state_vars.timer;
+  freq_step = start_state_vars.freq_step;
 
   state result_state = update_fsm(start_state, test_state_inputs.button_array, test_state_inputs.steps_taken);
 
@@ -83,12 +83,12 @@ bool test_transition(state start_state,
 /*
  * REPLACE THE FOLLOWING 6 LINES WITH YOUR TEST CASES
  */
-const state test_states_in[0] = {};
-const state test_states_out[0] = {};
-const state_inputs test_input[0] = {};
-const state_vars test_in_vars[0] = {};
-const state_vars test_out_vars[0] = {};
-const int num_tests = 0;
+const state test_states_in[13] =     {(state) 1    , (state) 1    , (state) 1    , (state) 1    , (state) 1    , (state) 2     , (state) 2       , (state) 2     , (state) 3     , (state) 3     , (state) 3     , (state) 4       , (state) 4     };
+const state test_states_out[13] =    {(state) 1    , (state) 1    , (state) 1    , (state) 1    , (state) 2    , (state) 3     , (state) 4       , (state) 2     , (state) 1     , (state) 2     , (state) 3     , (state) 1       , (state) 4     };
+const state_inputs test_input[13] =  {{{0,0,1,0},0}, {{0,0,0,1},0}, {{0,0,1,0},0}, {{0,0,0,1},0}, {{1,0,0,0},0}, {{1,0,0,0},40}, {{0,0,0,0},2400}, {{0,0,0,0},40}, {{0,1,0,0},40}, {{1,0,0,0},40}, {{0,0,0,0},40}, {{0,1,0,0},2400}, {{0,0,0,0},40}};
+const state_vars test_in_vars[13] =  {{2, 20}      , {2, 20}      , {4, 10}      , {1, 40}      , {3, 13.33333}, {4, 10}       , {2, 20}         , {2, 20}       , {1, 40}       , {3, 13.333333}, {3, 13.333333}, {4, 10}         , {4, 10}};
+const state_vars test_out_vars[13] = {{3, 13.33333}, {1, 40}      , {4, 10}      , {1, 40}      , {3, 13.33333}, {4, 10}       , {2, 20}         , {2, 20}       , {1, 40}       , {3, 13.333333}, {3, 13.333333}, {4, 10}         , {4, 10}};
+const int num_tests = 13;
 
 /*
  * Runs through all the test cases defined above
