@@ -89,10 +89,10 @@ void setup() {
 }
 
 void loop() {
-//   CURRENT_STATE = update_fsm(CURRENT_STATE, button_array, steps_taken);
-//   clear_buttons();
-//
-//   WDT->CLEAR.reg = 0xa5;
+   CURRENT_STATE = update_fsm(CURRENT_STATE, button_array, steps_taken);
+   clear_buttons();
+
+   WDT->CLEAR.reg = 0xa5;
 }
 
 state update_fsm(state CURRENT_STATE, volatile int local_button_array[4], volatile int local_steps_taken){
