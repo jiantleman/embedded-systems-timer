@@ -1,3 +1,7 @@
+// Mocked variables for display testing
+int mocked_timer;
+float mocked_freq_step;
+
 void clear_buttons(){
   button_array[0] = 0;
   button_array[1] = 0;
@@ -6,22 +10,30 @@ void clear_buttons(){
 }
 
 void start_pause_handler(){
-//  Serial.println("START_PAUSE BUTTON CLICKED");
+  #ifdef TESTING
+  Serial.println("Start/pause button clicked");
+  #endif
   button_array[START_PAUSE_BUTTON] = 1;
 }
 
 void reset_button_handler(){
-//  Serial.println("RESET BUTTON CLICKED");
+  #ifdef TESTING
+  Serial.println("Reset button clicked");
+  #endif
   button_array[RESET_BUTTON] = 1;
 }
 
 void inc_button_handler(){
-//  Serial.println("INC BUTTON CLICKED");
+  #ifdef TESTING
+  Serial.println("Increment button clicked");
+  #endif
   button_array[INC_BUTTON] = 1;
 }
 
 void dec_button_handler(){
-//  Serial.println("DEC BUTTON CLICKED");
+  #ifdef TESTING
+  Serial.println("Decrement button clicked");
+  #endif
   button_array[DEC_BUTTON] = 1;
 }
 
@@ -78,15 +90,20 @@ void reset_system(){
 }
 
 #else
+
+// Mocked functions for testing
+
 void set_lights(int timer){
   Serial.print("Set lights: ");
   Serial.print(timer);
   Serial.println(" min");
+  mocked_timer = timer;
 }
 
 void start_step(float freq_step){
     Serial.print("Start step: ");
     Serial.println(freq_step);
+    mocked_freq_step = freq_step;
 }
 
 void stop_step(){
